@@ -55,4 +55,75 @@ public class MediaFileBO extends FileBO {
         this.height = height;
     }
 
+    public Boolean getHasAudio() {
+        return hasAudio;
+    }
+
+    public void setHasAudio(Boolean hasAudio) {
+        this.hasAudio = hasAudio;
+    }
+
+    public Boolean getHasVideo() {
+        return hasVideo;
+    }
+
+    public void setHasVideo(Boolean hasVideo) {
+        this.hasVideo = hasVideo;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public String getAudioCodec() {
+        return audioCodec;
+    }
+
+    public void setAudioCodec(String audioCodec) {
+        this.audioCodec = audioCodec;
+    }
+
+    public String getVideoCodec() {
+        return videoCodec;
+    }
+
+    public void setVideoCodec(String videoCodec) {
+        this.videoCodec = videoCodec;
+    }
+
+    public Integer getAudioBitrate() {
+        return audioBitrate;
+    }
+
+    public void setAudioBitrate(Integer audioBitrate) {
+        this.audioBitrate = audioBitrate;
+    }
+
+    public Integer getVideoBitrate() {
+        return videoBitrate;
+    }
+
+    public void setVideoBitrate(Integer videoBitrate) {
+        this.videoBitrate = videoBitrate;
+    }
+
+    public Integer getWidth() {
+        return width;
+    }
+
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
+    }
 }
