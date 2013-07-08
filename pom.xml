@@ -6,7 +6,7 @@
 
     <groupId>Alexa</groupId>
     <artifactId>Alexa</artifactId>
-    <version>0.1</version>
+    <version>0.1.0</version>
     <dependencies>
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
@@ -56,6 +56,27 @@
                     <goal>aggregate</goal>
                     <defaultVersion>${version}</defaultVersion>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.sparkvalley.alexa.base.utils.DDLGenerator</mainClass>
+                            <includeProjectDependencies>true</includeProjectDependencies>
+                            <arguments>
+                                <argument>${project.basedir}${file.separator}</argument>
+                                <argument>${name}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
