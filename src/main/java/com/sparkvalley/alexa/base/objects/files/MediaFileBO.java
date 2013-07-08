@@ -1,5 +1,8 @@
 package com.sparkvalley.alexa.base.objects.files;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Collection;
 
 /**
@@ -9,14 +12,34 @@ import java.util.Collection;
  * Time: 1:24 AM
  * To change this template use File | Settings | File Templates.
  */
+@Entity
+@Table(name = "MEDIA_FILE")
 public class MediaFileBO extends FileBO {
-    private Boolean hasAudio;private Boolean hasVideo;
+    @Column(name = "HAS_AUDIO")
+    private Boolean hasAudio;
+
+    @Column(name = "HAS_VIDEO")
+    private Boolean hasVideo;
+
+    @Column(name = "DURATION")
     private Integer duration;
+
+    @Column(name = "AUDIO_CODEC")
     private String audioCodec;
+
+    @Column(name = "VIDEO_CODEC")
     private String videoCodec;
+
+    @Column(name = "AUDIO_BITRATE")
     private Integer audioBitrate;
+
+    @Column(name = "VIDEO_BITRATE")
     private Integer videoBitrate;
+
+    @Column(name = "WIDTH")
     private Integer width;
+
+    @Column(name = "HEIGHT")
     private Integer height;
 
     public MediaFileBO() {

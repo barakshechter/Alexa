@@ -1,5 +1,6 @@
 package com.sparkvalley.alexa.base.objects.files;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -9,9 +10,16 @@ import java.io.Serializable;
  * Time: 1:07 AM
  * To change this template use File | Settings | File Templates.
  */
+@Entity
+@Table(name = "FILE_ATTR")
 public class FileAttrBO implements Serializable {
+    @Id
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    int id;
+
     @ManyToOne
-    @JoinColumn("HASH")
+    @JoinColumn(name = "HASH")
     private FileBO file;
 
     @Column(name = "NAME")
@@ -27,6 +35,14 @@ public class FileAttrBO implements Serializable {
         this.file = file;
         this.name = name;
         this.value = value;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public FileBO getFile() {

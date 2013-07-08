@@ -2,6 +2,7 @@ package com.sparkvalley.alexa.base.objects.files;
 
 import com.sparkvalley.alexa.base.utils.Tests;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -12,6 +13,9 @@ import java.util.Collection;
  * Time: 12:58 AM
  * To change this template use File | Settings | File Templates.
  */
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "FILE")
 public class FileBO implements Serializable {
     @Id
     @Column(name = "HASH")
@@ -27,7 +31,7 @@ public class FileBO implements Serializable {
     private String type;
 
     @OneToMany
-    @JoinColumn("HASH")
+    @JoinColumn(name = "HASH")
     Collection<FileAttrBO> attributes;
 
     public FileBO() {
