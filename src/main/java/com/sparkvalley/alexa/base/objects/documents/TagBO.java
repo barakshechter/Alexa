@@ -13,6 +13,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "TAG")
 public class TagBO {
+    @Id
     @Column(name = "ID")
     private int id;
 

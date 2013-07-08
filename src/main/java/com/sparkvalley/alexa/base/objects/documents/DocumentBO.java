@@ -14,6 +14,11 @@ import java.util.List;
 @Entity
 @Table(name = "DOCUMENT")
 public class DocumentBO {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ID")
+    private int id;
+
     @Column(name = "NAME")
     private String name;
 
@@ -30,6 +35,14 @@ public class DocumentBO {
     @JoinColumn(name = "DOCUMENT_ID")
     @OrderBy("date asc")
     List<RevisionBO> revisions;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -61,5 +74,13 @@ public class DocumentBO {
 
     public void setModifyDate(Date modifyDate) {
         this.modifyDate = modifyDate;
+    }
+
+    public List<RevisionBO> getRevisions() {
+        return revisions;
+    }
+
+    public void setRevisions(List<RevisionBO> revisions) {
+        this.revisions = revisions;
     }
 }
