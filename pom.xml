@@ -6,7 +6,7 @@
 
     <groupId>Alexa</groupId>
     <artifactId>Alexa</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1</version>
     <dependencies>
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
@@ -18,7 +18,47 @@
             <artifactId>hibernate-jpa-2.0-api</artifactId>
             <version>1.0.1.Final</version>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.6.8.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mysema.querydsl</groupId>
+            <artifactId>querydsl-apt</artifactId>
+            <version>2.5.0</version>
+        </dependency>
     </dependencies>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <annotationProcessors>
+                        <annotationProcessor>com.mysema.query.apt.hibernate.HibernateAnnotationProcessor
+                        </annotationProcessor>
+                    </annotationProcessors>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <destDir>Javadocs</destDir>
+                    <show>protected</show>
+                    <force>true</force>
+                    <goal>aggregate</goal>
+                    <defaultVersion>${version}</defaultVersion>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>
