@@ -13,33 +13,33 @@ import java.util.Collection;
  * To change this template use File | Settings | File Templates.
  */
 @Entity
-@Table(name = "MEDIA_FILE")
+@Table(name = "MediaFile")
 public class MediaFileBO extends FileBO {
-    @Column(name = "HAS_AUDIO")
+    @Column(name = "hasAudio")
     private Boolean hasAudio;
 
-    @Column(name = "HAS_VIDEO")
+    @Column(name = "hasVido")
     private Boolean hasVideo;
 
-    @Column(name = "DURATION")
+    @Column(name = "duration")
     private Integer duration;
 
-    @Column(name = "AUDIO_CODEC")
+    @Column(name = "audioCodec")
     private String audioCodec;
 
-    @Column(name = "VIDEO_CODEC")
+    @Column(name = "videoCodec")
     private String videoCodec;
 
-    @Column(name = "AUDIO_BITRATE")
+    @Column(name = "audioBitrate")
     private Integer audioBitrate;
 
-    @Column(name = "VIDEO_BITRATE")
+    @Column(name = "videoBitrate")
     private Integer videoBitrate;
 
-    @Column(name = "WIDTH")
+    @Column(name = "width")
     private Integer width;
 
-    @Column(name = "HEIGHT")
+    @Column(name = "height")
     private Integer height;
 
     public MediaFileBO() {

@@ -11,24 +11,24 @@ import java.util.Collection;
  * To change this template use File | Settings | File Templates.
  */
 @Entity
-@Table(name = "TAG")
+@Table(name = "Tag")
 public class TagBO {
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     private int id;
 
-    @Column(name = "NAME")
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "description")
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "PARENT_ID")
+    @JoinColumn(name = "parentId")
     private TagBO parent;
 
     @OneToMany
-    @JoinColumn(name = "PARENT_ID")
+    @JoinColumn(name = "parentId")
     private Collection<TagBO> children;
 
     public TagBO() {

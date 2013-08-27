@@ -12,22 +12,22 @@ import javax.persistence.*;
  * To change this template use File | Settings | File Templates.
  */
 @Entity
-@Table(name = "DOCUMENT_ITEM")
+@Table(name = "DocumentItem")
 public class DocumentItemBO {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "id")
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "REVISION_ID")
+    @JoinColumn(name = "revisionId")
     private RevisionBO revision;
 
-    @Column(name = "POSITION")
+    @Column(name = "position")
     private int position;
 
     @ManyToOne
-    @JoinColumn(name = "HASH")
+    @JoinColumn(name = "fileId")
     private FileBO item;
 
     public DocumentItemBO() {

@@ -14,25 +14,25 @@ import java.util.List;
  */
 
 @Entity
-@Table(name = "REVISION")
+@Table(name = "Revision")
 public class RevisionBO implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "id")
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "DOCUMENT_ID")
+    @JoinColumn(name = "documentId")
     DocumentBO document;
 
-    @Column(name = "DATE")
+    @Column(name = "date")
     private Date date;
 
-    @Column(name = "COMMENTS")
+    @Column(name = "comments")
     private String comments;
 
     @OneToMany
-    @JoinColumn(name = "REVISION_ID")
+    @JoinColumn(name = "revisionId")
     @OrderBy("position asc")
     private List<DocumentItemBO> items;
 

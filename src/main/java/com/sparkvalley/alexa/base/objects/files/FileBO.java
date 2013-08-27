@@ -1,7 +1,5 @@
 package com.sparkvalley.alexa.base.objects.files;
 
-import com.sparkvalley.alexa.base.utils.Tests;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
@@ -15,46 +13,46 @@ import java.util.Collection;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "FILE")
+@Table(name = "File")
 public class FileBO implements Serializable {
     @Id
-    @Column(name = "HASH")
-    private String hash;
+    @Column(name = "id")
+    private String id;
 
-    @Column(name = "SIZE")
+    @Column(name = "size")
     private Long size;
 
-    @Column(name = "PATH")
+    @Column(name = "path")
     private String path;
 
-    @Column(name = "TYPE")
+    @Column(name = "type")
     private String type;
 
     @OneToMany
-    @JoinColumn(name = "HASH")
+    @JoinColumn(name = "fileId")
     Collection<FileAttrBO> attributes;
 
     public FileBO() {
     }
 
-    public FileBO(String hash, Long size, String path) {
-        this(hash, size, path, null, null);
+    public FileBO(String id, Long size, String path) {
+        this(id, size, path, null, null);
     }
 
-    public FileBO(String hash, Long size, String path, String type, Collection<FileAttrBO> attributes) {
-        this.hash = hash;
+    public FileBO(String id, Long size, String path, String type, Collection<FileAttrBO> attributes) {
+        this.id = id;
         this.size = size;
         this.path = path;
         this.type = type;
         this.attributes = attributes;
     }
 
-    public String getHash() {
-        return hash;
+    public String getId() {
+        return id;
     }
 
-    public void setHash(String hash) {
-        this.hash = hash;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Long getSize() {

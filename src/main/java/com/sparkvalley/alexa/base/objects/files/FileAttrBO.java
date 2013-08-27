@@ -11,21 +11,21 @@ import java.io.Serializable;
  * To change this template use File | Settings | File Templates.
  */
 @Entity
-@Table(name = "FILE_ATTR")
+@Table(name = "FileAttributes")
 public class FileAttrBO implements Serializable {
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
     @ManyToOne
-    @JoinColumn(name = "HASH")
+    @JoinColumn(name = "fileId")
     private FileBO file;
 
-    @Column(name = "NAME")
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "VALUE")
+    @Column(name = "value")
     private String value;
 
     public FileAttrBO() {

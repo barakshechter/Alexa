@@ -12,27 +12,29 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @Entity
-@Table(name = "DOCUMENT")
+@Table(name = "Document")
 public class DocumentBO {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "id")
     private int id;
 
-    @Column(name = "NAME")
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "AUTHOR")
-    private String author;
-
-    @Column(name = "CREATE_DATE")
+    @Column(name = "authorId")
+    private int author;
+    /*
+    to be replaced with an author entity
+     */
+    @Column(name = "createDate")
     private Date createDate;
 
-    @Column(name = "MODIFY_DATE")
+    @Column(name = "modifyDate")
     private Date modifyDate;
 
     @OneToMany
-    @JoinColumn(name = "DOCUMENT_ID")
+    @JoinColumn(name = "documentId")
     @OrderBy("date asc")
     List<RevisionBO> revisions;
 
@@ -52,11 +54,11 @@ public class DocumentBO {
         this.name = name;
     }
 
-    public String getAuthor() {
+    public int getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(int author) {
         this.author = author;
     }
 
