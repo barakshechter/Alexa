@@ -1,4 +1,4 @@
-package com.sparkvalley.alexa.base.objects.documents;
+package com.sparkvalley.alexa.base.objects;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -12,7 +12,7 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "Tag")
-public class TagBO {
+public class Tag {
     @Id
     @Column(name = "id")
     private int id;
@@ -23,22 +23,25 @@ public class TagBO {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "parentId")
+    private int parentId;
+
     @ManyToOne
     @JoinColumn(name = "parentId")
-    private TagBO parent;
+    private Tag parent;
 
     @OneToMany
     @JoinColumn(name = "parentId")
-    private Collection<TagBO> children;
+    private Collection<Tag> children;
 
-    public TagBO() {
+    public Tag() {
     }
 
-    public TagBO(String name, TagBO parent) {
+    public Tag(String name, Tag parent) {
         this(name, null, parent);
     }
 
-    public TagBO(String name, String description, TagBO parent) {
+    public Tag(String name, String description, Tag parent) {
         this.name = name;
         this.description = description;
         this.parent = parent;
@@ -68,19 +71,27 @@ public class TagBO {
         this.description = description;
     }
 
-    public TagBO getParent() {
+    public Tag getParent() {
         return parent;
     }
 
-    public void setParent(TagBO parent) {
+    public void setParent(Tag parent) {
         this.parent = parent;
     }
 
-    public Collection<TagBO> getChildren() {
+    public Collection<Tag> getChildren() {
         return children;
     }
 
-    public void setChildren(Collection<TagBO> children) {
+    public void setChildren(Collection<Tag> children) {
         this.children = children;
+    }
+
+    public int getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
     }
 }

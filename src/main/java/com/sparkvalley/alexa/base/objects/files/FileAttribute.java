@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "FileAttributes")
-public class FileAttrBO implements Serializable {
+public class FileAttribute implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,18 +20,18 @@ public class FileAttrBO implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "fileId")
-    private FileBO file;
+    private File file;
 
-    @Column(name = "name")
+    @Column(name = "name", length = 255)
     private String name;
 
-    @Column(name = "value")
+    @Column(name = "value", length = 4096)
     private String value;
 
-    public FileAttrBO() {
+    public FileAttribute() {
     }
 
-    public FileAttrBO(FileBO file, String name, String value) {
+    public FileAttribute(File file, String name, String value) {
         this.file = file;
         this.name = name;
         this.value = value;
@@ -45,11 +45,11 @@ public class FileAttrBO implements Serializable {
         this.id = id;
     }
 
-    public FileBO getFile() {
+    public File getFile() {
         return file;
     }
 
-    public void setFile(FileBO file) {
+    public void setFile(File file) {
         this.file = file;
     }
 

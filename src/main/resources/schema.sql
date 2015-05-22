@@ -1,64 +1,51 @@
-CREATE TABLE alexa.Document
-(
-    id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    name VARCHAR(1024) NOT NULL,
-    authorId INT NOT NULL,
-    createDate TIMESTAMP NOT NULL,
-    modifyDate TIMESTAMP NOT NULL
+DROP SCHEMA Alexa;
+CREATE SCHEMA Alexa;
+
+CREATE TABLE IF NOT EXISTS Alexa.FileAttributes (
+  id     INTEGER IDENTITY,
+  name   VARCHAR2(255),
+  value  VARCHAR2(4096),
+  fileId VARCHAR2(128)
 );
 
-CREATE TABLE alexa.DocumentItem
-(
-    id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    revisionId INT NOT NULL,
-    position INT NOT NULL,
-    fileId VARCHAR(512) NOT NULL
+CREATE TABLE IF NOT EXISTS Alexa.FileTags (
+  fileId VARCHAR2(128) NOT NULL,
+  tagId  INTEGER      NOT NULL
 );
 
-CREATE TABLE alexa.Revision
-(
-    id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    documentId INT NOT NULL,
-    date TIMESTAMP NOT NULL,
-    comments VARCHAR(4096) NOT NULL,
-    createDate TIMESTAMP NOT NULL,
-    modifyDate TIMESTAMP NOT NULL
+CREATE TABLE IF NOT EXISTS Alexa.MediaFile (
+  audioBitrate      INTEGER,
+  audioCodec        VARCHAR2(64),
+  duration          INTEGER,
+  hasAudio          BOOLEAN,
+  hasVideo          BOOLEAN,
+  height            INTEGER,
+  thumbnailId       VARCHAR2(128),
+  videoBitrate      INTEGER,
+  videoCodec        VARCHAR2(64),
+  width             INTEGER,
+  id                VARCHAR2(128) NOT NULL,
+  PRIMARY KEY (id)
 );
+CREATE TABLE IF NOT EXISTS Alexa.Tag (
+  id          INTEGER IDENTITY,
+  description TEXT,
+  name        VARCHAR2(4096),
+  parentId    INTEGER
+);
+CREATE TABLE IF NOT EXISTS Alexa.File (
+  id         VARCHAR2(128) NOT NULL,
+  createDate TIMESTAMP,
+  extension  VARCHAR2(12),
+  modifyDate TIMESTAMP,
+  size       BIGINT,
+  type       VARCHAR2(255),
+  PRIMARY KEY (id)
+);
+ALTER TABLE Alexa.FileAttributes ADD CONSTRAINT FK228E9C13CEF20497 FOREIGN KEY (fileId) REFERENCES Alexa.File;
+ALTER TABLE Alexa.FileTags ADD CONSTRAINT FKD802E3D5D250CC02 FOREIGN KEY (tagId) REFERENCES Alexa.Tag;
+ALTER TABLE Alexa.FileTags ADD CONSTRAINT FKD802E3D5CEF20497 FOREIGN KEY (fileId) REFERENCES Alexa.File;
+ALTER TABLE Alexa.MediaFile ADD CONSTRAINT FKF70067601AE97E1B FOREIGN KEY (id) REFERENCES Alexa.File;
+ALTER TABLE Alexa.Tag ADD CONSTRAINT FK1477A11CC1112 FOREIGN KEY (parentId) REFERENCES Alexa.Tag;
 
-CREATE TABLE alexa.Tag
-(
-  id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-  name VARCHAR(256) NOT NULL,
-  description VARCHAR(1024) NOT NULL,
-  parentId INT NOT NULL
-);
-
-CREATE TABLE FileAttributes
-(
-  id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  fileId TEXT NOT NULL,
-  name VARCHAR(64) NOT NULL,
-  value TEXT NOT NULL
-);
-
-CREATE TABLE alexa.File
-(
-  id VARCHAR(512) PRIMARY KEY NOT NULL,
-  size LONG  NOT NULL,
-  path VARCHAR(1024) NOT NULL,
-  type VARCHAR(256) NOT NULL
-);
-
-CREATE TABLE alexa.MediaFile
-(
-  id VARCHAR(512) PRIMARY KEY NOT NULL,
-  hasAudio BOOLEAN ,
-  hasVideo BOOLEAN ,
-  duration INT,
-  audioCodec VARCHAR(16),
-  videoCodec VARCHAR(16),
-  audioBitrate INT,
-  videoBitrate INT,
-  height INT,
-  width INT
-);
+INSERT INTO Alexa.Tag (description, name) VALUES ('/','/');
