@@ -11,10 +11,11 @@ import java.util.List;
  */
 public interface ITagDao {
     public Collection<Tag> loadTags();
+    public Tag getRootTag();
     public Tag getTagById(int id);
     public Tag updateTag(Tag tag);
     public Collection<Tag> getTagChildren(Tag tag);
     public Tag getTagByName(String name, Tag parent);
-    public Tag getTagByPath(Path tagPath);
-    public List<Tag> createTagsForPath(Path tagPath);
+    public Tag getTagByPath(List<String> tagPath);
+    public Tag createTagsForPath(List<String> tagPath);
 }
