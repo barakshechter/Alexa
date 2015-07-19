@@ -1,40 +1,24 @@
 package com.sparkvalley.alexa.base.objects;
 
-import javax.persistence.*;
-import java.util.Collection;
+import java.io.Serializable;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Barak
- * Date: 7/7/13
- * Time: 1:39 AM
- * To change this template use File | Settings | File Templates.
- */
-@Entity
-@Table(name = "Tag")
-public class Tag {
-    @Id
-    @Column(name = "id")
-    private int id;
-
-    @Column(name = "name")
+public class Tag implements Serializable {
+    private int id = -1;
     private String name;
-
-    @Column(name = "description")
     private String description;
-
-    @Column(name = "parentId")
-    private int parentId;
-
-    @ManyToOne
-    @JoinColumn(name = "parentId")
-    private Tag parent;
-
-    @OneToMany
-    @JoinColumn(name = "parentId")
-    private Collection<Tag> children;
+    private Integer parentId;
 
     public Tag() {
+    }
+
+    public Tag(String name, Integer parentId) {
+        this(name, null, parentId);
+    }
+
+    public Tag(String name, String description, Integer parentId) {
+        this.name = name;
+        this.description = description;
+        this.parentId = parentId;
     }
 
     public Tag(String name, Tag parent) {
@@ -44,8 +28,9 @@ public class Tag {
     public Tag(String name, String description, Tag parent) {
         this.name = name;
         this.description = description;
-        this.parent = parent;
+        this.parentId = parent != null ? parent.getParentId() : null;
     }
+
 
     public int getId() {
         return id;
@@ -71,27 +56,34 @@ public class Tag {
         this.description = description;
     }
 
-    public Tag getParent() {
-        return parent;
-    }
-
-    public void setParent(Tag parent) {
-        this.parent = parent;
-    }
-
-    public Collection<Tag> getChildren() {
-        return children;
-    }
-
-    public void setChildren(Collection<Tag> children) {
-        this.children = children;
-    }
-
-    public int getParentId() {
+    public Integer getParentId() {
         return parentId;
     }
 
-    public void setParentId(int parentId) {
+    public void setParentId(Integer parentId) {
         this.parentId = parentId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Tag tag = (Tag) o;
+
+        if (id != tag.id) return false;
+        if (name != null ? !name.equals(tag.name) : tag.name != null) return false;
+        if (description != null ? !description.equals(tag.description) : tag.description != null) return false;
+        return !(parentId != null ? !parentId.equals(tag.parentId) : tag.parentId != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (parentId != null ? parentId.hashCode() : 0);
+        return result;
     }
 }

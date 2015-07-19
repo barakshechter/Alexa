@@ -1,38 +1,18 @@
 package com.sparkvalley.alexa.base.objects.files;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Barak
- * Date: 7/7/13
- * Time: 1:07 AM
- * To change this template use File | Settings | File Templates.
- */
-@Entity
-@Table(name = "FileAttributes")
 public class FileAttribute implements Serializable {
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
-
-    @ManyToOne
-    @JoinColumn(name = "fileId")
-    private File file;
-
-    @Column(name = "name", length = 255)
+    private int id = -1;
+    private String fileId;
     private String name;
-
-    @Column(name = "value", length = 4096)
     private String value;
 
     public FileAttribute() {
     }
 
-    public FileAttribute(File file, String name, String value) {
-        this.file = file;
+    public FileAttribute(String fileId, String name, String value) {
+        this.fileId = fileId;
         this.name = name;
         this.value = value;
     }
@@ -45,12 +25,12 @@ public class FileAttribute implements Serializable {
         this.id = id;
     }
 
-    public File getFile() {
-        return file;
+    public String getFileId() {
+        return fileId;
     }
 
-    public void setFile(File file) {
-        this.file = file;
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
     }
 
     public String getName() {
@@ -67,5 +47,28 @@ public class FileAttribute implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FileAttribute that = (FileAttribute) o;
+
+        if (id != that.id) return false;
+        if (fileId != null ? !fileId.equals(that.fileId) : that.fileId != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        return !(value != null ? !value.equals(that.value) : that.value != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (fileId != null ? fileId.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        return result;
     }
 }

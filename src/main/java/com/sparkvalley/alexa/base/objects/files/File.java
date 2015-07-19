@@ -1,67 +1,28 @@
 package com.sparkvalley.alexa.base.objects.files;
 
-import com.sparkvalley.alexa.base.objects.Tag;
-
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Barak
- * Date: 7/7/13
- * Time: 12:58 AM
- * To change this template use File | Settings | File Templates.
- */
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "File", schema = "alexa")
 public class File implements Serializable {
-    @Id
-    @Column(name = "id", length = 128)
     private String id; //TODO Compute via Sha-512 64 byte
-
-    @Column(name = "size")
     private Long size;
-
-    @Column(name = "createDate")
     private Date createDate;
-
-    @Column(name = "modifyDate")
     private Date modifyDate;
-
-    @Column(name = "type", length = 255)
     private String type;
-
-    @Column(name = "extension", length = 12)
-    private String extension;
-
-    @OneToMany
-    @JoinColumn(name = "fileId")
-    Collection<FileAttribute> attributes;
-
-    @ManyToMany
-    @JoinTable(name = "FileTags", joinColumns = {
-            @JoinColumn(name = "fileId") },
-            inverseJoinColumns = { @JoinColumn(name = "tagId") })
-    Collection<Tag> tags;
 
     public File() {
     }
 
     public File(String id, Long size, Date createDate, Date modifyDate) {
-        this(id, size, createDate, modifyDate, null, null, null);
+        this(id, size, createDate, modifyDate, null);
     }
 
-    public File(String id, Long size, Date createDate, Date modifyDate, String extension, String type, Collection<FileAttribute> attributes) {
+    public File(String id, Long size, Date createDate, Date modifyDate, String type) {
         this.id = id;
         this.size = size;
         this.createDate = createDate;
         this.modifyDate = modifyDate;
-        this.extension = extension;
         this.type = type;
-        this.attributes = attributes;
     }
 
     public String getId() {
@@ -88,14 +49,6 @@ public class File implements Serializable {
         this.type = type;
     }
 
-    public Collection<FileAttribute> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(Collection<FileAttribute> attributes) {
-        this.attributes = attributes;
-    }
-
     public Date getCreateDate() {
         return createDate;
     }
@@ -112,14 +65,6 @@ public class File implements Serializable {
         this.modifyDate = modifyDate;
     }
 
-    public String getExtension() {
-        return extension;
-    }
-
-    public void setExtension(String extension) {
-        this.extension = extension;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -127,15 +72,11 @@ public class File implements Serializable {
 
         File file = (File) o;
 
-        if (attributes != null ? !attributes.equals(file.attributes) : file.attributes != null) return false;
-        if (createDate != null ? !createDate.equals(file.createDate) : file.createDate != null) return false;
-        if (extension != null ? !extension.equals(file.extension) : file.extension != null) return false;
         if (id != null ? !id.equals(file.id) : file.id != null) return false;
-        if (modifyDate != null ? !modifyDate.equals(file.modifyDate) : file.modifyDate != null) return false;
         if (size != null ? !size.equals(file.size) : file.size != null) return false;
-        if (type != null ? !type.equals(file.type) : file.type != null) return false;
-
-        return true;
+        if (createDate != null ? !createDate.equals(file.createDate) : file.createDate != null) return false;
+        if (modifyDate != null ? !modifyDate.equals(file.modifyDate) : file.modifyDate != null) return false;
+        return !(type != null ? !type.equals(file.type) : file.type != null);
     }
 
     @Override
@@ -145,8 +86,6 @@ public class File implements Serializable {
         result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
         result = 31 * result + (modifyDate != null ? modifyDate.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (extension != null ? extension.hashCode() : 0);
-        result = 31 * result + (attributes != null ? attributes.hashCode() : 0);
         return result;
     }
 }
