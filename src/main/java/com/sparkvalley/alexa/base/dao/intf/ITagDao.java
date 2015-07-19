@@ -18,4 +18,6 @@ public interface ITagDao {
     public Tag getTagByName(String name, Tag parent);
     public Tag getTagByPath(List<String> tagPath);
     public Tag createTagsForPath(List<String> tagPath);
+    public boolean deleteTag(Tag tag, boolean recursive);
+    public Tag mergeTags(Tag src, Tag dest);
 }

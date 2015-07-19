@@ -26,6 +26,13 @@ public class TagDao implements ITagDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    ThreadLocal<Tag> rootTag = new ThreadLocal<Tag>() {
+        @Override
+        protected Tag initialValue() {
+            return jdbcTemplate.queryForObject("SELECT * FROM Alexa.Tag were parentId IS NULL", rowMapper);
+        }
+    };
+
     @Override
     public Collection<Tag> loadTags() {
         return jdbcTemplate.query("SELECT * FROM Alexa.Tag;", rowMapper);
@@ -33,7 +40,7 @@ public class TagDao implements ITagDao {
 
     @Override
     public Tag getRootTag() {
-        return jdbcTemplate.queryForObject("SELECT * FROM Alexa.Tag were parentId IS NULL", rowMapper);
+        return rootTag.get();
     }
 
     @Override
@@ -79,6 +86,34 @@ public class TagDao implements ITagDao {
         return getTagByPath(tagPath, true);
     }
 
+    @Override
+    public Tag mergeTags(Tag src, Tag dest) {
+        //Copy all children of src into dest
+        for (Tag child : getTagChildren(src)) {
+            child.setParentId(dest.getParentId());
+            updateTag(child);
+        }
+        deleteTag(src, false);
+        return dest;
+    }
+
+    @Override
+    public boolean deleteTag(Tag tag, boolean recursive) {
+        if (rootTag.get().getId() == tag.getId()) {
+            throw new RuntimeException("Unable to delete root tag.");
+        }
+        Collection<Tag> children = getTagChildren(tag);
+        if (!recursive && children.size() > 0) {
+            throw new RuntimeException(String.format("Tag %s (id=%d) still has %d children. Cannot delete tag.", tag.getName(), tag.getId(), children.size()));
+        }
+
+        for (Tag child : children) {
+            if (!deleteTag(child, recursive))
+                return false;
+        }
+        return jdbcTemplate.update("DELETE FROM Alexa.Tag WHERE id = ?", tag.getId()) == 1;
+    }
+
     private Tag getTagByPath(List<String> tagPath, boolean createIfMissing) {
         Tag currentTag = getRootTag();
         for (String pathElement : tagPath) {
@@ -106,4 +141,6 @@ public class TagDao implements ITagDao {
         }, keyHolder);
         return getTagById(keyHolder.getKey().intValue());
     }
+
+
 }
