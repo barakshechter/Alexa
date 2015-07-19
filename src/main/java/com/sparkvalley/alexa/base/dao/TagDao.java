@@ -26,7 +26,7 @@ public class TagDao implements ITagDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    ThreadLocal<Tag> rootTag = new ThreadLocal<Tag>() {
+    protected ThreadLocal<Tag> rootTag = new ThreadLocal<Tag>() {
         @Override
         protected Tag initialValue() {
             return jdbcTemplate.queryForObject("SELECT * FROM Alexa.Tag were parentId IS NULL", rowMapper);
@@ -99,7 +99,7 @@ public class TagDao implements ITagDao {
 
     @Override
     public boolean deleteTag(Tag tag, boolean recursive) {
-        if (rootTag.get().getId() == tag.getId()) {
+        if (getRootTag().getId() == tag.getId()) {
             throw new RuntimeException("Unable to delete root tag.");
         }
         Collection<Tag> children = getTagChildren(tag);
