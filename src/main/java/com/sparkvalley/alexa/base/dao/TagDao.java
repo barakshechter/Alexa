@@ -1,5 +1,6 @@
 package com.sparkvalley.alexa.base.dao;
 
+import com.google.common.collect.Iterables;
 import com.sparkvalley.alexa.base.dao.intf.IFilesDao;
 import com.sparkvalley.alexa.base.dao.intf.ITagDao;
 import com.sparkvalley.alexa.base.objects.Tag;
@@ -35,7 +36,7 @@ public class TagDao implements ITagDao {
     protected ThreadLocal<Tag> rootTag = new ThreadLocal<Tag>() {
         @Override
         protected Tag initialValue() {
-            return jdbcTemplate.queryForObject("SELECT * FROM Alexa.Tag were parentId IS NULL", rowMapper);
+            return jdbcTemplate.queryForObject("SELECT * FROM Alexa.Tag where parentId IS NULL", rowMapper);
         }
     };
 
@@ -51,7 +52,10 @@ public class TagDao implements ITagDao {
 
     @Override
     public Tag getTagById(int id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM Alexa.Tag WHERE id = ?", rowMapper, id);
+        return Iterables.getOnlyElement(
+                jdbcTemplate.query("SELECT * FROM Alexa.Tag WHERE id = ?", rowMapper, id),
+                null
+        );
     }
 
     @Override
@@ -87,7 +91,10 @@ public class TagDao implements ITagDao {
 
     @Override
     public Tag getTagByName(String name, Tag parent) {
-        return jdbcTemplate.queryForObject("SELECT * FROM Alexa.Tag WHERE parentId = ? AND name = ?", rowMapper, parent.getId(), name);
+        return Iterables.getOnlyElement(
+                jdbcTemplate.query("SELECT * FROM Alexa.Tag WHERE parentId = ? AND name = ?", rowMapper, parent.getId(), name),
+                null
+        );
     }
 
     @Override
@@ -151,16 +158,14 @@ public class TagDao implements ITagDao {
 
     private Tag createTag(final Tag tag) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(new PreparedStatementCreator() {
-            @Override
-            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+        jdbcTemplate.update(con ->  {
                 PreparedStatement stmt = con.prepareStatement("INSERT INTO Alexa.Tag (name, description, parentId) VALUES (?, ?, ?)");
                 stmt.setString(1, tag.getName());
                 stmt.setString(2, tag.getDescription());
                 stmt.setInt(3, tag.getParentId());
                 return stmt;
             }
-        }, keyHolder);
+        , keyHolder);
         return getTagById(keyHolder.getKey().intValue());
     }
 

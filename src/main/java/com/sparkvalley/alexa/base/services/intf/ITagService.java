@@ -32,11 +32,9 @@ public interface ITagService {
 
     /**
      * Create a tag with a hierarchical path, and any intermediate tags in between
-     * @param newTagName
-     * @param parentPath
      * @return the newly created tag
      */
-    public Tag createTag(String newTagName, String... parentPath);
+    public Tag createTag(String... path);
 
     /**
      * Create a tag with a parent tag specified

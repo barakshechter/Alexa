@@ -6,6 +6,7 @@ import com.sparkvalley.alexa.base.services.intf.ITagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -31,8 +32,8 @@ public class TagService implements ITagService {
     }
 
     @Override
-    public Tag createTag(String newTagName, String... parentPath) {
-        return null;
+    public Tag createTag(String... path) {
+        return tagDao.createTagsForPath(Arrays.asList(path));
     }
 
     @Override
@@ -52,7 +53,7 @@ public class TagService implements ITagService {
 
     @Override
     public Tag rootTag() {
-        return null;
+        return tagDao.getRootTag();
     }
 
     public Collection<Tag> findAllTags() {

@@ -28,7 +28,7 @@ public class Tag implements Serializable {
     public Tag(String name, String description, Tag parent) {
         this.name = name;
         this.description = description;
-        this.parentId = parent != null ? parent.getParentId() : null;
+        this.parentId = parent != null ? parent.getId() : null;
     }
 
 
