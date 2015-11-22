@@ -5,10 +5,10 @@ import java.util.Date;
 
 public class File implements Serializable {
     private String id; //TODO Compute via Sha-512 64 byte
-    private Long size;
-    private Date createDate;
-    private Date modifyDate;
-    private String type;
+    private Long size;       //in bytes
+    private Date createDate; //min of all files with this id
+    private Date modifyDate; //max of all files with this id
+    private String type;    //mime type
 
     public File() {
     }

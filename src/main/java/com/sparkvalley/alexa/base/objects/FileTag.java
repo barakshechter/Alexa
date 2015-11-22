@@ -1,7 +1,13 @@
 package com.sparkvalley.alexa.base.objects;
 
+import com.sparkvalley.alexa.base.objects.files.File;
+
 import java.io.Serializable;
 
+/**
+ * This object puts files in paths that are specified by a tag under the specific file name.
+ * Multiple ffiles can therefore exist in the same path (ie., tag) under the same name.
+ */
 public class FileTag implements Serializable {
     private String fileId;
     private int tagId;
@@ -15,6 +21,14 @@ public class FileTag implements Serializable {
         this.fileId = fileId;
         this.tagId = tagId;
         this.fileName = fileName;
+    }
+
+    public FileTag(File file, Tag tag) {
+        this(file.getId(), tag.getId());
+    }
+
+    public FileTag(File file, Tag tag, String fileName) {
+        this(file.getId(), tag.getId(), fileName);
     }
 
     public String getFileId() {

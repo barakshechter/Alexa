@@ -1,13 +1,17 @@
 package com.sparkvalley.alexa.base.dao;
 
+import com.sparkvalley.alexa.base.dao.intf.IFilesDao;
 import com.sparkvalley.alexa.base.dao.intf.ITagDao;
 import com.sparkvalley.alexa.base.objects.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,14 +19,16 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
+@Component
 public class TagDao implements ITagDao {
-    protected DataSource dataSource;
-    protected JdbcTemplate jdbcTemplate;
+    @Autowired protected DataSource dataSource;
+    @Autowired protected IFilesDao filesDao;
 
+    protected JdbcTemplate jdbcTemplate;
     protected RowMapper<Tag> rowMapper = new BeanPropertyRowMapper(Tag.class);
 
-    public TagDao(DataSource dataSource) {
-        this.dataSource = dataSource;
+    @PostConstruct
+    public void init() {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
@@ -50,6 +56,10 @@ public class TagDao implements ITagDao {
 
     @Override
     public Tag updateTag(Tag tag) {
+        return updateTag(tag, false);
+    }
+
+    private Tag updateTag(Tag tag, boolean mergeWithExistingSibling) {
 
         Tag newParent = tag.getParentId() == null ? getRootTag() : getTagById(tag.getParentId());
         if (newParent == null) {
@@ -57,7 +67,11 @@ public class TagDao implements ITagDao {
         }
         Tag existingSibling = getTagByName(tag.getName(), newParent);
         if (existingSibling != null && existingSibling.getId() != tag.getId()) {
-            throw new RuntimeException(String.format("Cannot update tag, tag with name %s for parentId=%d already exists.", tag.getName(), tag.getParentId()));
+            if (mergeWithExistingSibling) {
+                return mergeTags(tag, existingSibling);
+            } else {
+                throw new RuntimeException(String.format("Cannot update tag, tag with name %s for parentId=%d already exists.", tag.getName(), tag.getParentId()));
+            }
         }
 
         jdbcTemplate.update("UPDATE Alexa.Tag SET name = ?, description = ?, parentId = ? WHERE id = ?",
@@ -91,20 +105,28 @@ public class TagDao implements ITagDao {
         //Copy all children of src into dest
         for (Tag child : getTagChildren(src)) {
             child.setParentId(dest.getParentId());
-            updateTag(child);
+            updateTag(child, true);
         }
+        filesDao.moveFilesFromTag(src, dest);
         deleteTag(src, false);
         return dest;
     }
 
     @Override
     public boolean deleteTag(Tag tag, boolean recursive) {
+        //TODO What if there are files under this tag?
         if (getRootTag().getId() == tag.getId()) {
             throw new RuntimeException("Unable to delete root tag.");
         }
         Collection<Tag> children = getTagChildren(tag);
         if (!recursive && children.size() > 0) {
             throw new RuntimeException(String.format("Tag %s (id=%d) still has %d children. Cannot delete tag.", tag.getName(), tag.getId(), children.size()));
+        }
+
+        if (recursive) {
+            filesDao.deleteFilesForTag(tag);
+        } else if (filesDao.getFilesForTag(tag, 1, 1).size() > 0) {
+            throw new RuntimeException(String.format("Tag still has files associated with it. Cannot delete tag."));
         }
 
         for (Tag child : children) {

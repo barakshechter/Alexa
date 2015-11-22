@@ -8,22 +8,24 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Created by Barak on 4/10/2015.
  */
 public interface IFileService {
-    public File saveFile(String key, InputStream is, Path path, BasicFileAttributes attributes);
-    public File saveFile(String key, InputStream is, Path path, BasicFileAttributes attributes, Collection<Tag> tags);
+    boolean fileExists(String fileId);
+    Collection<File> findFiles(Tag tag);
+    Collection<File> findFiles(Tag tag, boolean recursive);
 
-    public Collection<File> loadFiles(Tag tag);
-    public Collection<File> loadFiles(Tag tag, boolean recursive);
+    InputStream openFile(String fileId) throws IOException;
 
-    public InputStream openFile(File file) throws IOException;
+    File storeFile(Path path, InputStream is, BasicFileAttributes attributes);
+    File storeFile(Path path, InputStream is, BasicFileAttributes attributes, Collection<Tag> tags);
 
     //TODO come up with a search api
-    public Collection<File> searchFiles(Tag tag, Collection<?> parameters, boolean recursive);
+    Collection<File> searchFiles(Tag tag, Collection<?> parameters, boolean recursive);
 
-    public boolean tagFiles(Tag tag, Collection<File> files);
+    boolean tagFiles(Tag tag, Map<File, String> files);
 
 }

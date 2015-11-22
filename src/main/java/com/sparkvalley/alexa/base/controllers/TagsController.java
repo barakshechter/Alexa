@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * Created by Barak on 4/14/2015.
- */
 @RestController
 @RequestMapping("/tags")
 public class TagsController {

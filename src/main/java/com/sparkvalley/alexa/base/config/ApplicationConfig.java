@@ -1,34 +1,24 @@
 package com.sparkvalley.alexa.base.config;
 
-import com.sparkvalley.alexa.base.dao.FilesDao;
-import com.sparkvalley.alexa.base.dao.TagDao;
-import com.sparkvalley.alexa.base.dao.intf.IFilesDao;
-import com.sparkvalley.alexa.base.dao.intf.ITagDao;
-import com.sparkvalley.alexa.base.services.FileService;
-import com.sparkvalley.alexa.base.services.intf.IFileService;
+import com.sparkvalley.alexa.base.services.intf.IStorageService;
+import com.sparkvalley.alexa.base.services.storage.FilesystemStorageService;
 import org.h2.Driver;
 import org.h2.tools.RunScript;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import java.io.FileReader;
+import java.nio.file.Paths;
 
-/**
- * Created by Barak on 4/13/2015.
- */
 @Configuration
 @ComponentScan(basePackages = {"com.sparkvalley.alexa"})
-@PropertySource("classpath:alexa.properties")
 public class ApplicationConfig {
 
-    @Value("${alexa.filesBasePath}")
-    String basePath;
-
+    @Value("${alexa.filesBasePath}") String basePath;
 
     @Bean
     public DataSource dataSource() {
@@ -40,18 +30,13 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public IFilesDao filesDao() {
-        return new FilesDao(dataSource());
-    }
-
-    @Bean
-    public ITagDao tagDao() {
-        return new TagDao(dataSource());
+    public IStorageService filesystemStorage() {
+        return new FilesystemStorageService(Paths.get(basePath, "files"));
     }
 
     //@Bean
-    public Void initDatabase() throws Throwable {
-        RunScript.execute(dataSource().getConnection(), new FileReader("schema.sql"));
+    public Void initDatabase(DataSource dataSource) throws Throwable {
+        RunScript.execute(dataSource.getConnection(), new FileReader("schema.sql"));
         return null;
     }
 }
