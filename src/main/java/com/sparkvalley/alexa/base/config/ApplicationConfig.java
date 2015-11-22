@@ -5,6 +5,7 @@ import com.sparkvalley.alexa.base.services.storage.FilesystemStorageService;
 import org.h2.Driver;
 import org.h2.tools.RunScript;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,7 @@ import java.nio.file.Paths;
 
 @Configuration
 @ComponentScan(basePackages = {"com.sparkvalley.alexa"})
+@EnableAutoConfiguration
 public class ApplicationConfig {
 
     @Value("${alexa.filesBasePath}") String basePath;

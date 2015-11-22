@@ -1,10 +1,9 @@
-package com.sparkvalley.alexa.base.utils;
+package com.sparkvalley.alexa;
 
 import com.mysema.util.ClassPathUtils;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.H2Dialect;
-import org.hibernate.dialect.MySQL5Dialect;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 
 import java.util.Set;
