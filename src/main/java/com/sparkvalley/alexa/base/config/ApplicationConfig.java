@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.io.FileReader;
-import java.nio.file.Paths;
 
 @Configuration
 @ComponentScan(basePackages = {"com.sparkvalley.alexa"})
@@ -33,7 +33,7 @@ public class ApplicationConfig {
 
     @Bean
     public IStorageService filesystemStorage() {
-        return new FilesystemStorageService(Paths.get(basePath, "files"));
+        return new FilesystemStorageService(new File(basePath, "files"));
     }
 
     //@Bean

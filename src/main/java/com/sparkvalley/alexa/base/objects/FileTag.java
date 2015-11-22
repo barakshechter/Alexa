@@ -1,6 +1,6 @@
 package com.sparkvalley.alexa.base.objects;
 
-import com.sparkvalley.alexa.base.objects.files.File;
+import com.sparkvalley.alexa.base.objects.files.FileMetadata;
 
 import java.io.Serializable;
 
@@ -23,11 +23,11 @@ public class FileTag implements Serializable {
         this.fileName = fileName;
     }
 
-    public FileTag(File file, Tag tag) {
+    public FileTag(FileMetadata file, Tag tag) {
         this(file.getId(), tag.getId());
     }
 
-    public FileTag(File file, Tag tag, String fileName) {
+    public FileTag(FileMetadata file, Tag tag, String fileName) {
         this(file.getId(), tag.getId(), fileName);
     }
 

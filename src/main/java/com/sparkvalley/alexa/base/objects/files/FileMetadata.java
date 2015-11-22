@@ -3,21 +3,21 @@ package com.sparkvalley.alexa.base.objects.files;
 import java.io.Serializable;
 import java.util.Date;
 
-public class File implements Serializable {
+public class FileMetadata implements Serializable {
     private String id; //TODO Compute via Sha-512 64 byte
     private Long size;       //in bytes
     private Date createDate; //min of all files with this id
     private Date modifyDate; //max of all files with this id
     private String type;    //mime type
 
-    public File() {
+    public FileMetadata() {
     }
 
-    public File(String id, Long size, Date createDate, Date modifyDate) {
+    public FileMetadata(String id, Long size, Date createDate, Date modifyDate) {
         this(id, size, createDate, modifyDate, null);
     }
 
-    public File(String id, Long size, Date createDate, Date modifyDate, String type) {
+    public FileMetadata(String id, Long size, Date createDate, Date modifyDate, String type) {
         this.id = id;
         this.size = size;
         this.createDate = createDate;
@@ -70,13 +70,13 @@ public class File implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        File file = (File) o;
+        FileMetadata fileMetadata = (FileMetadata) o;
 
-        if (id != null ? !id.equals(file.id) : file.id != null) return false;
-        if (size != null ? !size.equals(file.size) : file.size != null) return false;
-        if (createDate != null ? !createDate.equals(file.createDate) : file.createDate != null) return false;
-        if (modifyDate != null ? !modifyDate.equals(file.modifyDate) : file.modifyDate != null) return false;
-        return !(type != null ? !type.equals(file.type) : file.type != null);
+        if (id != null ? !id.equals(fileMetadata.id) : fileMetadata.id != null) return false;
+        if (size != null ? !size.equals(fileMetadata.size) : fileMetadata.size != null) return false;
+        if (createDate != null ? !createDate.equals(fileMetadata.createDate) : fileMetadata.createDate != null) return false;
+        if (modifyDate != null ? !modifyDate.equals(fileMetadata.modifyDate) : fileMetadata.modifyDate != null) return false;
+        return !(type != null ? !type.equals(fileMetadata.type) : fileMetadata.type != null);
     }
 
     @Override

@@ -1,12 +1,11 @@
 package com.sparkvalley.alexa.base.services;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.sparkvalley.alexa.base.dao.intf.IFilesDao;
 import com.sparkvalley.alexa.base.dao.intf.ITagDao;
 import com.sparkvalley.alexa.base.objects.Tag;
-import com.sparkvalley.alexa.base.objects.files.File;
+import com.sparkvalley.alexa.base.objects.files.FileMetadata;
 import com.sparkvalley.alexa.base.services.intf.IFileService;
 import com.sparkvalley.alexa.base.services.intf.IStorageService;
 import org.apache.commons.io.FileUtils;
@@ -15,9 +14,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.xml.bind.DatatypeConverter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -52,10 +51,10 @@ public class FileService implements IFileService {
     }
 
     @Override
-    public Collection<File> findFiles(Tag tag, boolean recursive) {
+    public Collection<FileMetadata> findFiles(Tag tag, boolean recursive) {
         Queue<Tag> tagsToExplore = new ConcurrentLinkedQueue<>(Collections.singleton(tag));
         Set<Tag> seenTags = Sets.newSetFromMap(Maps.newConcurrentMap());
-        Set<File> files = Sets.newSetFromMap(Maps.newConcurrentMap());
+        Set<FileMetadata> files = Sets.newSetFromMap(Maps.newConcurrentMap());
 
         while (!tagsToExplore.isEmpty()) {
             tag = tagsToExplore.remove();
@@ -74,18 +73,18 @@ public class FileService implements IFileService {
     }
 
     @Override
-    public Collection<File> findFiles(Tag tag) {
+    public Collection<FileMetadata> findFiles(Tag tag) {
         return filesDao.getFilesForTag(tag);
     }
 
     @Override
-    public File storeFile(Path path, InputStream is, BasicFileAttributes attributes, Collection<Tag> tags) {
+    public FileMetadata storeFile(String[] path, InputStream is, BasicFileAttributes attributes, Collection<Tag> tags) {
         try {
             DigestInputStream dis = new DigestInputStream(is, MessageDigest.getInstance(ID_HASH_FUNCTION));
-            java.io.File tempFile = java.io.File.createTempFile("alexa", "storeFile");
+            File tempFile = File.createTempFile("alexa", "storeFile");
 
             FileUtils.copyInputStreamToFile(dis, tempFile);
-            File fileMetadata = new File(
+            FileMetadata fileMetadata = new FileMetadata(
                     DatatypeConverter.printHexBinary(dis.getMessageDigest().digest()),
                     attributes.size(),
                     new Date(attributes.creationTime().toMillis()),
@@ -95,8 +94,7 @@ public class FileService implements IFileService {
             //Store the file metadata object
             filesDao.updateFile(fileMetadata);
 
-            List<String> pathElements = Lists.newArrayList();
-            path.forEach( p -> pathElements.add(p.toString()));
+            List<String> pathElements = Arrays.asList(path);
 
             //Tag the file in its path
             filesDao.tagFile(
@@ -118,12 +116,12 @@ public class FileService implements IFileService {
             return fileMetadata;
 
         } catch (Throwable throwable) {
-
+            throwable.printStackTrace();
         }
         return null;
     }
 
-    private boolean persistFile(IStorageService storageService, File fileMetadata, java.io.File file) {
+    private boolean persistFile(IStorageService storageService, FileMetadata fileMetadata, File file) {
         try {
             return storageService.persist(fileMetadata, FileUtils.openInputStream(file));
         } catch (IOException e) {
@@ -132,12 +130,12 @@ public class FileService implements IFileService {
     }
 
     @Override
-    public File storeFile(Path path, InputStream is, BasicFileAttributes attributes) {
+    public FileMetadata storeFile(String[] path, InputStream is, BasicFileAttributes attributes) {
         return storeFile(path, is, attributes, Collections.emptyList());
     }
 
     @Override
-    public boolean tagFiles(Tag tag, Map<File, String> files) {
+    public boolean tagFiles(Tag tag, Map<FileMetadata, String> files) {
         return filesDao.tagFiles(tag, files);
     }
 
@@ -160,7 +158,7 @@ public class FileService implements IFileService {
     }
 
     @Override
-    public Collection<File> searchFiles(Tag tag, Collection<?> parameters, boolean recursive) {
+    public Collection<FileMetadata> searchFiles(Tag tag, Collection<?> parameters, boolean recursive) {
         throw new UnsupportedOperationException();
     }
 }

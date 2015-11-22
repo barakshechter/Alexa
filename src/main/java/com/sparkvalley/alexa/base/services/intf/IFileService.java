@@ -1,11 +1,10 @@
 package com.sparkvalley.alexa.base.services.intf;
 
 import com.sparkvalley.alexa.base.objects.Tag;
-import com.sparkvalley.alexa.base.objects.files.File;
+import com.sparkvalley.alexa.base.objects.files.FileMetadata;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
 import java.util.Map;
@@ -15,17 +14,17 @@ import java.util.Map;
  */
 public interface IFileService {
     boolean fileExists(String fileId);
-    Collection<File> findFiles(Tag tag);
-    Collection<File> findFiles(Tag tag, boolean recursive);
+    Collection<FileMetadata> findFiles(Tag tag);
+    Collection<FileMetadata> findFiles(Tag tag, boolean recursive);
 
     InputStream openFile(String fileId) throws IOException;
 
-    File storeFile(Path path, InputStream is, BasicFileAttributes attributes);
-    File storeFile(Path path, InputStream is, BasicFileAttributes attributes, Collection<Tag> tags);
+    FileMetadata storeFile(String[] path, InputStream is, BasicFileAttributes attributes);
+    FileMetadata storeFile(String[] path, InputStream is, BasicFileAttributes attributes, Collection<Tag> tags);
 
     //TODO come up with a search api
-    Collection<File> searchFiles(Tag tag, Collection<?> parameters, boolean recursive);
+    Collection<FileMetadata> searchFiles(Tag tag, Collection<?> parameters, boolean recursive);
 
-    boolean tagFiles(Tag tag, Map<File, String> files);
+    boolean tagFiles(Tag tag, Map<FileMetadata, String> files);
 
 }

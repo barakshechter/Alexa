@@ -1,36 +1,48 @@
 package com.sparkvalley.alexa.base.services.storage;
 
-import com.sparkvalley.alexa.base.objects.files.File;
+import com.sparkvalley.alexa.base.objects.files.FileMetadata;
 import com.sparkvalley.alexa.base.services.intf.IStorageService;
 import org.apache.commons.io.FileUtils;
 
+import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class FilesystemStorageService implements IStorageService {
-    private Path basePath;
+    private File basePath;
     private int readPriority;
 
-    public FilesystemStorageService(Path basePath) {
+    public FilesystemStorageService(File basePath) {
         this(basePath, STRONGLY_PREFERRED);
     }
 
-    public FilesystemStorageService(Path basePath, int readPriority) {
+    public FilesystemStorageService(File basePath, int readPriority) {
         this.basePath = basePath;
         this.readPriority = readPriority;
     }
 
-    @Override
-    public boolean exists(String fileId) {
-        return computeLocation(fileId).toFile().exists();
+    @PostConstruct
+    public void init() throws InstantiationException {
+        if (!basePath.exists()) {
+            basePath.mkdirs();
+        }
+
+        if (!basePath.isDirectory()) {
+            throw new InstantiationException("Base path for storage exists, but is not a directory!");
+        }
+
     }
 
     @Override
-    public java.io.File retrieve(String fileId) throws IOException {
-        java.io.File copy = java.io.File.createTempFile("alexa", fileId);
+    public boolean exists(String fileId) {
+        return computeLocation(fileId).exists();
+    }
+
+    @Override
+    public File retrieve(String fileId) throws IOException {
+        File copy = File.createTempFile("alexa", fileId);
         FileUtils.copyInputStreamToFile(
                 stream(fileId), copy
         );
@@ -40,19 +52,19 @@ public class FilesystemStorageService implements IStorageService {
 
     @Override
     public InputStream stream(String fileId) throws IOException {
-        return FileUtils.openInputStream(computeLocation(fileId).toFile());
+        return FileUtils.openInputStream(computeLocation(fileId));
     }
 
     @Override
-    public boolean persist(File metadata, InputStream file) throws IOException {
+    public boolean persist(FileMetadata metadata, InputStream file) throws IOException {
         if (exists(metadata.getId())) {
             return true;
         }
 
-        java.io.File tempFile = java.io.File.createTempFile("alexa", metadata.getId());
+        File tempFile = File.createTempFile("alexa", metadata.getId());
 
         FileUtils.copyInputStreamToFile(file, tempFile);
-        FileUtils.moveFile(tempFile, computeLocation(metadata.getId()).toFile());
+        FileUtils.moveFile(tempFile, computeLocation(metadata.getId()));
         return true;
     }
 
@@ -62,7 +74,7 @@ public class FilesystemStorageService implements IStorageService {
             throw new FileNotFoundException("Unable to find file to delete. Id=" + fileId);
         }
 
-        return computeLocation(fileId).toFile().delete();
+        return computeLocation(fileId).delete();
     }
 
     @Override
@@ -70,12 +82,17 @@ public class FilesystemStorageService implements IStorageService {
         return readPriority;
     }
 
-    private Path computeLocation(String fileId) {
-        String[] pathParts = new String[15];
-        for (int i = 1; i < 64; i+=4)
-            pathParts[i] = fileId.substring(i, i+4);
+    private File computeLocation(String fileId) {
+        StringBuilder sb = new StringBuilder();
+        while (fileId.length() > 4) {
+            sb.append(fileId.substring(0, 4)).append("/");
+            fileId = fileId.substring(4);
+        }
+        sb.append(fileId);
 
-        Path filePath = Paths.get(fileId.substring(0, 4), pathParts);
-        return basePath.resolve(filePath);
+
+        File filePath = new File(basePath, sb.toString());
+        filePath.getParentFile().mkdirs();
+        return filePath;
     }
 }

@@ -3,7 +3,7 @@ package com.sparkvalley.alexa.base.dao;
 import com.google.common.collect.Lists;
 import com.sparkvalley.alexa.base.dao.intf.IFilesDao;
 import com.sparkvalley.alexa.base.objects.Tag;
-import com.sparkvalley.alexa.base.objects.files.File;
+import com.sparkvalley.alexa.base.objects.files.FileMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -25,7 +25,7 @@ public class FilesDao implements IFilesDao {
     @Autowired protected DataSource dataSource;
 
     protected JdbcTemplate jdbcTemplate;
-    protected RowMapper<File> rowMapper = new BeanPropertyRowMapper(File.class);
+    protected RowMapper<FileMetadata> rowMapper = new BeanPropertyRowMapper(FileMetadata.class);
 
     @PostConstruct
     public void init() {
@@ -33,22 +33,22 @@ public class FilesDao implements IFilesDao {
     }
 
     @Override
-    public File getFileById(String id) {
+    public FileMetadata getFileById(String id) {
         return jdbcTemplate.queryForObject("SELECT * FROM Alexa.File WHERE id = ?", rowMapper, id);
     }
 
     @Override
-    public File updateFile(File file) {
+    public FileMetadata updateFile(FileMetadata fileMetadata) {
         //TODO Validate file integrity
 
         jdbcTemplate.update("MERGE INTO Alexa.File (id, size, createDate, modifyDate, type) VALUES (?, ?, ?, ?, ?)",
-                file.getId(), file.getSize(), file.getCreateDate(), file.getModifyDate(), file.getType()
+                fileMetadata.getId(), fileMetadata.getSize(), fileMetadata.getCreateDate(), fileMetadata.getModifyDate(), fileMetadata.getType()
         );
-        return file;
+        return fileMetadata;
     }
 
     @Override
-    public Collection<File> getFilesForTag(Tag tag) {
+    public Collection<FileMetadata> getFilesForTag(Tag tag) {
         return getFilesForTag(tag, null, null);
     }
 
@@ -58,7 +58,7 @@ public class FilesDao implements IFilesDao {
     }
 
     @Override
-    public Collection<File> getFilesForTag(Tag tag, Integer pageSize, Integer pageNumber) {
+    public Collection<FileMetadata> getFilesForTag(Tag tag, Integer pageSize, Integer pageNumber) {
         String limitClause = " LIMIT ALL";
         if (pageNumber == null) {
             pageNumber = 1;
@@ -82,25 +82,25 @@ public class FilesDao implements IFilesDao {
     }
 
     @Override
-    public Collection<File> searchFiles(Collection<?> params) {
+    public Collection<FileMetadata> searchFiles(Collection<?> params) {
         return searchFiles(params, null, null);
     }
 
     @Override
-    public Collection<File> searchFiles(Collection<?> params, Integer pageSize, Integer pageNumber) {
+    public Collection<FileMetadata> searchFiles(Collection<?> params, Integer pageSize, Integer pageNumber) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean tagFile(Tag tag, File file, String fileName) {
+    public boolean tagFile(Tag tag, FileMetadata file, String fileName) {
         return tagFiles(tag, Collections.singletonMap(file, fileName));
     }
 
     @Override
-    public boolean tagFiles(final Tag tag, Map<File, String> files) {
-        final List<Map.Entry<File, String>> fileEntries = Lists.newArrayList(files.entrySet());
+    public boolean tagFiles(final Tag tag, Map<FileMetadata, String> files) {
+        final List<Map.Entry<FileMetadata, String>> fileEntries = Lists.newArrayList(files.entrySet());
 
-        int[] filesTagged = jdbcTemplate.batchUpdate("INSERT INTO Alexa.FileTags (tagId, fileId, fileName) VALUES (?, ?, ?)",
+        int[] filesTagged = jdbcTemplate.batchUpdate("MERGE INTO Alexa.FileTags (tagId, fileId, fileName) VALUES (?, ?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
